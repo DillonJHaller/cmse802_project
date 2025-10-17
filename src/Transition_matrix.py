@@ -1,8 +1,8 @@
-#######################################################################################################################
+##############################################################################################################################
 # This is an EDA script which creates matrices that chart the transitions from any land cover to any land cover in any 
 # set of years. Currently it checks the transitions that occur across the full series and also every pair of years since 2014.
-# This information is used for some simple visualizations via an ipynb found in the 'notebooks' directory.
-####################################################################################################################### 
+# This information is used for some simple visualizations via Visualize_Transitions.ipynb found in the 'notebooks' directory.
+##############################################################################################################################
 # Keeping this here because I use it for reference
 # #nlcd_colorscheme = {
 #     11: "#466b9f", #Open Water
@@ -99,7 +99,7 @@ def transition_matrix(time_series, nlcd_vals, start_year = 1985, end_year = 2023
         full_ts_trans_df.loc[s, e] = count/tot * 100
 
     #Write to csv
-    full_ts_trans_df.to_csv(f'results\\{start_year}_to_{end_year}_Trans.csv')
+    full_ts_trans_df.to_csv(f'results\\transitions\\{start_year}_to_{end_year}_Trans.csv')
     return full_ts_trans_df
 
 transition_matrix(time_series, nlcd_vals)
