@@ -6,11 +6,25 @@ import os
 import matplotlib.pyplot as plt
 import csv
 
-#Functions of analysis
-##Should be able to take in tifs with georeferencing information and return a tif with georeferencing information
-##Find all areas with constant cropland or pasture/hay landcover for five years, that subsequently have a non-agricultural, non developed landcover for five years
-##Specifically pick out contiguous clusters of such areas larger than a size threshold
-##Identify the date of the transition
+#For reference:
+# nlcd_colorscheme = {
+#     11: "#466b9f", #Open Water
+#     12: "#d1def8", #Snow/Ice
+#     21: "#dec5c5", #Dev Open space
+#     22: "#d99282", #Dev low intensity
+#     23: "#eb0000", #Dev med intensity
+#     24: "#ab0000", #Dev high intensity
+#     31: "#b3ac9f", #Barren
+#     41: "#68ab5f", #Deciduous
+#     42: "#1c5f2c", #Evergreen
+#     43: "#b5c58f", #Mixed
+#     52: "#ccb879", #Shrub/scrub
+#     71: "#dfdfc2", #Grassland/herbaceous
+#     81: "#dcd939", #Pasture/hay
+#     82: "#ab6c28", #Cultivated crops
+#     90: "#b8d9eb", #Woody wetlands
+#     95: "#6c9fb8"  #Herbaceous wetlands
+# }
 
 #Recode array to simpler classes
 def reclass_lc(lc_array):
@@ -24,30 +38,11 @@ def reclass_lc(lc_array):
 
 #Set up constants
 raster_directory = "D:\\NLCD\\Masked"
-nlcd_vals = (11, 12, 21, 22, 23, 24, 31, 41, 42, 43, 52, 71, 81, 82, 90, 95)
-nlcd_colorscheme = {
-    11: "#466b9f", #Open Water
-    12: "#d1def8", #Snow/Ice
-    21: "#dec5c5", #Dev Open space
-    22: "#d99282", #Dev low intensity
-    23: "#eb0000", #Dev med intensity
-    24: "#ab0000", #Dev high intensity
-    31: "#b3ac9f", #Barren
-    41: "#68ab5f", #Deciduous
-    42: "#1c5f2c", #Evergreen
-    43: "#b5c58f", #Mixed
-    52: "#ccb879", #Shrub/scrub
-    71: "#dfdfc2", #Grassland/herbaceous
-    81: "#dcd939", #Pasture/hay
-    82: "#ab6c28", #Cultivated crops
-    90: "#b8d9eb", #Woody wetlands
-    95: "#6c9fb8"  #Herbaceous wetlands
-}
+start_year = 1985
 
 #Read in NLCD file locations
 raster_files = [f for f in os.listdir(raster_directory) if f.lower().endswith('.tif')]
 print(raster_files)
-
 
 #Get basic GDAL information from the first tif
 r1 = raster_files[0]
@@ -62,13 +57,13 @@ with gdal.Open(os.path.join(raster_directory, r1)) as dataset:
 
 #Loop through all years
 for i, raster_file in enumerate(raster_files):
-    year = 1985 + i
+    year = start_year + i
     with gdal.Open(os.path.join(raster_directory, raster_file)) as dataset:
         band = dataset.GetRasterBand(1)
         lc_array = band.ReadAsArray()
         rc_array = reclass_lc(lc_array)
 
-        out_ds = dr.Create(f'D:\\NLCD\\Reclassed\\RC_{year}.tif', rx, ry, 1, gdal.GDT_UInt16) #Storing externally due to file sizes
+        out_ds = dr.Create(f'D:\\NLCD\\Reclassed\\RC_{year}.tif', rx, ry, 1, gdal.GDT_Byte) #Storing externally due to file sizes
         out_ds.SetGeoTransform(gt)
         out_ds.SetProjection(prj)
         out_band = out_ds.GetRasterBand(1)
