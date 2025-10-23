@@ -46,6 +46,7 @@ nlcd_colorscheme = {
 
 #Read in NLCD file locations
 raster_files = [f for f in os.listdir(raster_directory) if f.lower().endswith('.tif')]
+print(raster_files)
 
 
 #Get basic GDAL information from the first tif
@@ -67,7 +68,7 @@ for i, raster_file in enumerate(raster_files):
         lc_array = band.ReadAsArray()
         rc_array = reclass_lc(lc_array)
 
-        out_ds = dr.Create(f'D:\\NLCD\\Reclassed\\RC_{year}.tif', rx, ry, 1, gdal.GDT_UInt16)
+        out_ds = dr.Create(f'D:\\NLCD\\Reclassed\\RC_{year}.tif', rx, ry, 1, gdal.GDT_UInt16) #Storing externally due to file sizes
         out_ds.SetGeoTransform(gt)
         out_ds.SetProjection(prj)
         out_band = out_ds.GetRasterBand(1)

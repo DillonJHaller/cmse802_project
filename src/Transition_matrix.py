@@ -42,18 +42,6 @@ raster_files = [f for f in os.listdir(raster_directory) if f.lower().endswith('.
 #Empty time series
 time_series = []
 
-#Get basic GDAL information from the first tif
-# r1 = raster_files[0]
-# with gdal.Open(os.path.join(raster_directory, r1)) as dataset:
-#     gt = dataset.GetGeoTransform()
-#     prj = dataset.GetProjection()
-#     dr = gdal.GetDriverByName('GTiff')
-#     rx = dataset.RasterXSize
-#     ry = dataset.RasterYSize
-#     band = dataset.GetRasterBand(1)
-#     dt = band.DataType
-#Holding on to this for now to copy/paste elsewhere
-
 #Loop through all years
 for raster_file in raster_files:
     with gdal.Open(os.path.join(raster_directory, raster_file)) as dataset:
