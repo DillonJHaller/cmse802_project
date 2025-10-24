@@ -18,9 +18,12 @@ There's no code yet, so I'll add this later
 
 This code is entirely written in Python. You will need Python 3.x to run it, as well as the following packages:
 1. NumPy
-2. MatPlotLib
-3. GDAL - The Geospatial Data Abstraction Library
-4. Others will be added as discovered to be necessary
+2. Pandas
+3. MatPlotLib
+4. GDAL - The Geospatial Data Abstraction Library
+5. Rasterio - A wrapper for many GDAL functions that is somewhat easier to work with
+6. Geopandas - An extension to Pandas that allows for columns to contain information on geographic locations
+7. Shapely
 
 <h3> Data: </h3>
 
