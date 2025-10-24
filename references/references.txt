@@ -1,0 +1,9 @@
+Martin, G., Austin, K., Lark, T., Lee, S., & Clark, C. M. (2025). Tracking cropland transitions: A comparative analysis of U.S. land cover change data. PLOS ONE, 20(3), e0313880. https://doi.org/10.1371/journal.pone.0313880
+
+Masek, J., Ju, J., Roger, J.-C., Skakun, S., Vermote, E., Claverie, M., Dungan, J., Yin, Z., Freitag, B., & Justice, C. (2021). HLS Operational Land Imager Surface Reflectance and TOA Brightness Daily Global 30m v2.0 [Dataset]. NASA Land Processes Distributed Active Archive Center. https://doi.org/10.5067/HLS/HLSL30.002
+
+Masek, J., Ju, J., Roger, J.-C., Skakun, S., Vermote, E., Claverie, M., Dungan, J., Yin, Z., Freitag, B., & Justice, C. (2021). HLS Sentinel-2 Multi-spectral Instrument Surface Reflectance Daily Global 30m v2.0 [Dataset]. NASA Land Processes Distributed Active Archive Center. https://doi.org/10.5067/HLS/HLSS30.002
+
+Ju, J., Zhou, Q., Freitag, B., Roy, D. P., Zhang, H. K., Sridhar, M., Mandel, J., Arab, S., Schmidt, G., Crawford, C. J., Gascon, F., Strobl, P. A., Masek, J. G., & Neigh, C. S. R. (2025). The Harmonized Landsat and Sentinel-2 version 2.0 surface reflectance dataset. Remote Sensing of Environment, 324, 114723. https://doi.org/10.1016/j.rse.2025.114723
+
+U.S. Geological Survey. (2024). Annual NLCD Collection 1 Science Products (Version 1) [Dataset]. https://doi.org/10.5066/P94UXNTS
