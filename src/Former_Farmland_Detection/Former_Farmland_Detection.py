@@ -92,6 +92,7 @@ lptc = ltpc_conversion(time_series)
 #Write out LTPC raster
 
 out_ds = dr.Create(f'D:\\NLCD\\LPTC\\LPTC.tif', rx, ry, 1, gdal.GDT_Int8) 
+out_ds.SetGeoTransform(gt)
 out_ds.SetProjection(prj)
 out_band = out_ds.GetRasterBand(1)
 out_band.WriteArray(lptc)
