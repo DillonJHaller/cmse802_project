@@ -5,3 +5,5 @@ The NLCD is developed by the USGS. It categorizes all land in the United States 
 
 2. HLS
 HLS is a combination of data from two similar satellite systems, NASA's Landsat program and the EU's Sentinel-2 program. The HLS dataset combines the data from these satellites into a common framework (projection, tiling system, resolution etc.) so that they can be used together. You can learn more about the HLS dataset [here](https://www.earthdata.nasa.gov/data/projects/hls) or see details about downloading it at the GitHub [repo](https://github.com/nasa/HLS-Data-Resources)
+
+To run the actual model, I create a set of points randomly placed at different points in each Long-term pattern class for both training and testing and save those out as shapefiles (conveniently, this keeps the training and testing data separate from the very beginning). Those points can then be used to grab values from the processed HLS data which serve as the model features. Those points are saved here in GitHub, as are the csvs which contain the pulled values. Everything else is far too large, even after processing.
