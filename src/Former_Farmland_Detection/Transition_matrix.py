@@ -1,8 +1,9 @@
-##############################################################################################################################
-# This is an EDA script which creates matrices that chart the transitions from any land cover to any land cover in any 
-# set of years. Currently it checks the transitions that occur across the full series and also every pair of years since 2014.
-# This information is used for some simple visualizations via Visualize_Transitions.ipynb found in the 'notebooks' directory.
-##############################################################################################################################
+'''
+ This is an EDA script which creates matrices that chart the transitions from any land cover to any land cover in any 
+ set of years. Currently it checks the transitions that occur across the full series and also every pair of years since 2014.
+ This information is used for some simple visualizations via Visualize_Transitions.ipynb found in the 'notebooks' directory.
+'''
+
 # Keeping this here because I use it for reference
 # #nlcd_colorscheme = {
 #     11: "#466b9f", #Open Water

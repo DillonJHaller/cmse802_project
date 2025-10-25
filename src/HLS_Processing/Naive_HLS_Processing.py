@@ -1,6 +1,8 @@
-#This is a very early processing of HLS image data.
-#The sole function is to average all bands individually for each pixel for a single year.
-#It is implemented in service of getting a base model up and running.
+'''
+This is a very early processing of HLS image data.
+The sole function is to average all bands individually for each pixel for a single year.
+It is implemented in service of getting a base model up and running.
+'''
 
 import numpy as np
 import os

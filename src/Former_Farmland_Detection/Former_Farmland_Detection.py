@@ -1,8 +1,9 @@
+'''
 #This script processes the last few years of reclassified NLCD data to generate a Long-Term Pattern Class (LTPC) raster as described in Martin et al., 2025.
+'''
 
 import numpy as np
 import pandas as pd
-import csv
 import os
 from osgeo import gdal
 gdal.UseExceptions()

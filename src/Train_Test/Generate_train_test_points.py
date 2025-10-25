@@ -1,4 +1,6 @@
-#This code generates shapefiles which contain points that will be used for pulling out training and testing data, no need to separate them later.
+'''
+This code generates shapefiles which contain points that will be used for pulling out training and testing data, no need to separate them later.
+'''
 
 import numpy as np
 import geopandas as gpd

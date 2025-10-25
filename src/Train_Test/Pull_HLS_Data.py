@@ -1,4 +1,6 @@
-#This code takes in a shape file and pulls HLS date for the points to a dataframe.
+'''
+This code takes in a shape file and pulls HLS date for the points to a dataframe.
+'''
 
 import numpy as np
 import geopandas as gpd
