@@ -8,13 +8,13 @@ import rasterio
 
 mosaic_directory = "D:\\HLS_Data\\Processed\\Naive_Averages\\Mosaicked"
 
-
 def pull_hls_data(shapefile_path, mosaic_directory, output_csv):
     #Read in the shapefile
     gdf = gpd.read_file(shapefile_path)
     #Prepare a dataframe to hold results
     results_df = pd.DataFrame()
     results_df['ID'] = range(len(gdf))
+    results_df['LTPC'] = gdf['LTPC'] #This is the label column
     results_df['Northing'] = gdf.geometry.y
     results_df['Easting'] = gdf.geometry.x
 

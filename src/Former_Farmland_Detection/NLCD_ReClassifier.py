@@ -1,3 +1,5 @@
+#This script recodes raw NLCD landcover data into simplified classes, simplified classes reflecting natural, agricultural, and developed land covers.
+
 import numpy as np
 import pandas as pd
 from osgeo import gdal

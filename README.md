@@ -24,9 +24,12 @@ This code is entirely written in Python. You will need Python 3.x to run it, as 
 5. Rasterio - A wrapper for many GDAL functions that is somewhat easier to work with
 6. Geopandas - An extension to Pandas that allows for columns to contain information on geographic locations
 7. Shapely
+8. pickle
 
 <h3> Data: </h3>
 
 The following datasets were used and are too large to be stored on GitHub
 1. National Land Cover Database
 2. Harmonized Landsat Sentinel-2
+
+See more at `Data_Statement.md` under the `data` folder
