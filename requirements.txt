@@ -1,0 +1,9 @@
+This code is entirely written in Python. You will need Python 3.x to run it, as well as the following packages:
+1. NumPy
+2. Pandas
+3. MatPlotLib
+4. GDAL - The Geospatial Data Abstraction Library
+5. Rasterio - A wrapper for many GDAL functions that is somewhat easier to work with
+6. Geopandas - An extension to Pandas that allows for columns to contain information on geographic locations
+7. Shapely
+8. pickle

@@ -1,4 +1,4 @@
-#Implements a land use change model using sklearn's RandomForestClassifier
+#Implements a model to detect former farm land (maybe) using sklearn's RandomForestClassifier
 
 import sklearn
 from sklearn.ensemble import RandomForestClassifier

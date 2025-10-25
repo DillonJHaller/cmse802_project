@@ -1,3 +1,5 @@
+#This code generates shapefiles which contain points that will be used for pulling out training and testing data, no need to separate them later.
+
 import numpy as np
 import geopandas as gpd
 import rasterio #An alternative library using for raster data
@@ -9,6 +11,7 @@ import os
 n_train_points, n_test_points = 100, 25
 raster_path = "D:\\NLCD\\LPTC\\LPTC.tif"
 out_path = "data\\Train_Test_Points"
+HLS_crs = "32615"  # UTM Zone 15N
 
 #Load up the raster of long-term pattern classes
 with rasterio.open(raster_path) as src:
@@ -49,6 +52,10 @@ for val in range(1, 10):
 #Now create the dataframes
 train_gdf = gpd.GeoDataFrame({'geometry': training_geoms, 'LTPC': training_labels}, crs=crs)
 test_gdf = gpd.GeoDataFrame({'geometry': testing_geoms, 'LTPC': testing_labels}, crs=crs)
+
+#Reproject to HLS CRS
+train_gdf = train_gdf.to_crs(epsg=HLS_crs)
+test_gdf = test_gdf.to_crs(epsg=HLS_crs)
 
 #Save out the files, shapefile, which is probably the most common format for storing geographic vector data
 #If you are unfamiliar with shapefiles, note that they actually consist of multiple files with the same name but different extensions

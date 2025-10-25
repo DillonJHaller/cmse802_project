@@ -14,7 +14,7 @@ def pull_hls_data(shapefile_path, mosaic_directory, output_csv):
     gdf = gpd.read_file(shapefile_path)
     #Prepare a dataframe to hold results
     results_df = pd.DataFrame()
-    results_df['ID'] = gdf['ID']
+    results_df['ID'] = range(len(gdf))
     results_df['Northing'] = gdf.geometry.y
     results_df['Easting'] = gdf.geometry.x
 
