@@ -16,21 +16,21 @@ Repository for Dillon Haller's CMSE 802 semester project
 
 Most of the code so far written is pre-processing. There are three pre-processing steps, each with their own folder. The NLCD processing and HLS processing need to be done first, but between the two of them can be done in either order. After that, the training and testing data need to be generated. Finally, the actual model implementation is done at the end.
 
-<h4> Pre-processing land cover data </h4>
+<h4> 1a. Pre-processing land cover data </h4>
 
 The scripts for pre-processing land cover data are found under `src\Former_Farmland_Detection.` In brief, running `NLCD_ReClassifier.py` will save out landcover datasets that have been reclassified into only four land cover types, pasture, cropland, non-agricultural/non-developed (NAND), and developed. Running `Former_Farmland_Detection.py` will fetch those reclassified landcover datasets and convert them to Long-term pattern classes (LTPCs), which track the trajectories of the land cover over the last ten years of the original dataset. We are interested in pasture, farmland, and NAND areas and any area which transitioned between any two of those. Any other patterns are not considered further. These LTPCs constitute the labels for the machine learning model.
 
 `Transition_matrix.py` is also located here. It is not part of the model generation process, but used to look at more specific dates and types of land cover transitions.
 
-<h4> Pre-processing HLS data </h4>
+<h4> 1b. Pre-processing HLS data </h4>
 
 The scripts for pre-processing the HLS satellite data are found under `src\HLS_Processing`. This is the "Feature engineering" step. Currently, I have only been able to put up `Naive_HLS_Processing.py`, which computes average reflectance values over 2024. These aren't really very useful. Further HLS processing will be added here. Note that there is a step I completed outside this repo because it can be more easily done outside of Python for small datasets. This step is mosaicking the data (stitching tiles together). Note that even while not implemented all the way, this step is very RAM and processor intensive
 
-<h4> Generating the training and testing datasets </h4>
+<h4> 2. Generating the training and testing datasets </h4>
 
 The scripts under `src\Train_Test` actually generate the data science-friendly datasets. NLCD and HLS processing must be done before proceeding to this step. `Generate_train_test_points.py` creates shapefiles at random pixels in each LTPC. These shapefiles are saved in the repo. `Pull_HLS_Data.py` uses the Rasterio library to grab values from the HLS data at each of the previously generated points.
 
-<h4> Model Implementation </h4>
+<h4> 3. Model Implementation </h4>
 
 The scripts under `src\Model_Implementation` will perform all work related to actually implementing the model. This is the only step which can be done without access to the original remote sensing archive. Currently, this only contains `Model_Implementation.py`, which creates a simple random forest model trained on the data pulled from HLS and the labels pulled from the NLCD.
 
