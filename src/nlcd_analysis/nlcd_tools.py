@@ -40,37 +40,4 @@ def reclass_lc(lc_array):
     reclass[np.isin(lc_array, [21, 22, 23, 24])] = 4 #Any developed class
     return reclass
 
-#Set up constants
-raster_directory = "D:\\NLCD\\Masked"
-start_year = 1985
 
-#Read in NLCD file locations
-raster_files = [f for f in os.listdir(raster_directory) if f.lower().endswith('.tif')]
-print(raster_files)
-
-#Get basic GDAL information from the first tif
-r1 = raster_files[0]
-with gdal.Open(os.path.join(raster_directory, r1)) as dataset:
-    gt = dataset.GetGeoTransform()
-    prj = dataset.GetProjection()
-    dr = gdal.GetDriverByName('GTiff')
-    rx = dataset.RasterXSize
-    ry = dataset.RasterYSize
-    band = dataset.GetRasterBand(1)
-    dt = band.DataType
-
-#Loop through all years
-for i, raster_file in enumerate(raster_files):
-    year = start_year + i
-    with gdal.Open(os.path.join(raster_directory, raster_file)) as dataset:
-        band = dataset.GetRasterBand(1)
-        lc_array = band.ReadAsArray()
-        rc_array = reclass_lc(lc_array)
-
-        out_ds = dr.Create(f'D:\\NLCD\\Reclassed\\RC_{year}.tif', rx, ry, 1, gdal.GDT_Byte) #Storing externally due to file sizes
-        out_ds.SetGeoTransform(gt)
-        out_ds.SetProjection(prj)
-        out_band = out_ds.GetRasterBand(1)
-        out_band.WriteArray(rc_array)
-        out_band.FlushCache()
-        out_ds = None
