@@ -1,6 +1,6 @@
 <h3> Former Farmland Detection</h3>
 
-This section of code processes raw NLCD data to generate labels. `main.py` runs the workflow, `nlcd_tools.py` contains the functions
+This section of code processes raw NLCD data to generate labels. `main.py` runs the workflow for my directory setup, `nlcd_tools.py` contains the functions
 There are two functions here which are used for the pre-processing of land cover data, in the given order:
 
 1. `reclass_lc` is used to simplify the NLCD land cover data into just five classes, three of which are of interest
