@@ -3,7 +3,7 @@ This script recodes raw NLCD landcover data into simplified classes, simplified 
 '''
 import numpy as np
 #Recode array to simpler classes
-def reclass_lc(lc_array):
+def reclass_lc(lc_array: np.ndarray) -> np.ndarray:
     '''
     Simple function to reclassify an NLCD array to a simpler format, with only four land cover classes (+ No Data)
 
@@ -35,6 +35,12 @@ def reclass_lc(lc_array):
         3: Non-agricultural/non-developed
         4: Developed land
     '''
+    #Reject invalid inputs
+    if not isinstance(lc_array, np.ndarray):
+        raise TypeError("Input must be a numpy array")
+    if lc_array.ndim != 2:
+        raise ValueError("Input array must be two-dimensional")
+
     reclass = np.zeros_like(lc_array) #Create a blank array of same size as original, fill it with no data
     # np.isin() returns a boolean array which can be used as an index, reflecting the positions where the value in the lc_array is within the list of classes given
     reclass[np.isin(lc_array, [81])] = 1 #Where original has pasture/hay
@@ -43,25 +49,8 @@ def reclass_lc(lc_array):
     reclass[np.isin(lc_array, [21, 22, 23, 24])] = 4 #Any developed class
     return reclass
 
-#Convert to long-term pattern class as described in Martin et al., 2025
-# Need the following classes:
-########## Constants
-#### 1: Stable pasture/hay
-#### 2: Stable cropland
-#### 3: Stable non-agricultural/non-developed
-########## Transitions
-#### 4: Transitioned from pasture/hay to cropland
-#### 5: Transitioned from pasture to non-agricultural/non-developed
-#### 6: Transitioned from cropland to pasture
-#### 7: Transitioned from cropland to NAND
-#### 8: Transitioned from NAND to pasture
-#### 9: Transitioned from NAND to crops
-########## Other
-#### 0: NoData or erratic patterns (both will be left out of analysis)
-#### 11: Developed land at any time
-
 #Function to compute LTPCs
-def ltpc_conversion(ts):
+def ltpc_conversion(ts: np.ndarray) -> np.ndarray:
     '''
     Function to convert from a simplified land cover time series to an array of long-term pattern class values. Classification is as described
     in Martin et al., 2025, but expanded to encompass cropland, pasture, and non-ag as three separate possibilities, rather than simply ag/non-ag.
@@ -92,6 +81,12 @@ def ltpc_conversion(ts):
             0: NoData or erratic patterns (both will be left out of analysis)
             11: Developed land at any time
     '''
+    #Reject invalid inputs
+    if not isinstance(ts, np.ndarray):
+        raise TypeError("Input must be a numpy array")
+    if ts.ndim != 3:
+        raise ValueError("Input array must be three-dimensional")
+    
     ltpc = np.zeros_like(ts[0], dtype=np.uint8)
     n_years = ts.shape[0]
 
