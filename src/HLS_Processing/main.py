@@ -1,5 +1,5 @@
 '''
-Main function to process HLS data
+Main script to process HLS data. Converts raw HLS data from the simple format into a format that can be used to pull values for the later machine learning algorithm.
 '''
 
 import numpy as np

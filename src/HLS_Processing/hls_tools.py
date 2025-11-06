@@ -1,37 +1,43 @@
 '''
 Contains functions used in processing HLS data
+Band number reference:
+Landsat bands:
+02 - Blue
+03 - Green
+04 - Red
+05 - NIR
+06 - SWIR1
+07 - SWIR2
+Sentinel-2 bands:
+02 - Blue
+03 - Green
+04 - Red
+05 - Red Edge 1
+06 - Red Edge 2
+07 - Red Edge 3
+8A - NIR narrow
+11 - SWIR1
+12 - SWIR2
+#See Ju et al., 2025 for more details.
 '''
 import numpy as np
 import os
 import rasterio
 
-
-#Landsat bands:
-#2 - Blue
-#3 - Green
-#4 - Red
-#5 - NIR
-#6 - SWIR1
-#7 - SWIR2
 L_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07']
-#Sentinel-2 bands:
-#2 - Blue
-#3 - Green
-#4 - Red
-#5 - Red Edge 1
-#6 - Red Edge 2
-#7 - Red Edge 3
-#8A - NIR narrow
-#11 - SWIR1
-#12 - SWIR2
 S_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B8A', 'B11', 'B12']
-#See Ju et al., 2025 for more details.
+
 
 # Should take an input directory which contains subdirectories for each date.
-# Should save out individual band averages as GeoTIFFs in an output directory.
 def create_band_average(input_directory, band):
+    '''
+    Function to create a numpy array which has the average reflectance values for a single band
 
-    #Reject if input or output directories do not exist
+    args:
+        input_directory: Directory which contains the raw data. 
+        band: String which identifies which band is being averaged.
+    '''
+    #Reject if input directories do not exist
     if not os.path.isdir(input_directory):
         raise ValueError("Input directory does not exist")
     
