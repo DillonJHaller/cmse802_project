@@ -45,6 +45,7 @@ This code is entirely written in Python. You will need Python 3.x to run it, as 
 6. Geopandas - An extension to Pandas that allows for columns to contain information on geographic locations
 7. Shapely
 8. pickle
+9. unittest - Only if you want to run the unittests yourself
 
 <h3> Data: </h3>
 
