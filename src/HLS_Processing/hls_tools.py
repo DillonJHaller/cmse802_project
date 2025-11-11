@@ -82,6 +82,12 @@ def create_band_average(input_directory, band):
         profile.update(dtype=rasterio.float32, count=1, compress='lzw') #Update profile for output
         return band_average, profile
     else:
-        return None, None, None
+        return None, None
 
+
+    def mosaic_tifs(tif_list, out_folder = None):
+        '''
+        Function to mosaic a set of four tifs together, given paths to them. If given an out folder, save out the mosaic
+        '''
+        pass
 
