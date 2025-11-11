@@ -23,9 +23,20 @@ Sentinel-2 bands:
 import numpy as np
 import os
 import rasterio
+from rasterio.merge import merge
 
 L_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07']
 S_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B8A', 'B11', 'B12']
+
+#Storage_Locations
+Landsat_directories =  ["D:\\HLS_Data\\Data\\L30\\2024\\15\\S\\V\\D",
+                        "D:\\HLS_Data\\Data\\L30\\2024\\15\\S\\W\\D",
+                        "D:\\HLS_Data\\Data\\L30\\2024\\15\\S\\W\\C",
+                        "D:\\HLS_Data\\Data\\L30\\2024\\15\\S\\X\\C"]
+Sentinel_directories = ["D:\\HLS_Data\\Data\\S30\\2024\\15\\S\\V\\D",
+                        "D:\\HLS_Data\\Data\\S30\\2024\\15\\S\\W\\D",
+                        "D:\\HLS_Data\\Data\\S30\\2024\\15\\S\\W\\C",
+                        "D:\\HLS_Data\\Data\\S30\\2024\\15\\S\\X\\C"]
 
 
 # Should take an input directory which contains subdirectories for each date.
@@ -85,9 +96,38 @@ def create_band_average(input_directory, band):
         return None, None
 
 
-    def mosaic_tifs(tif_list, out_folder = None):
-        '''
-        Function to mosaic a set of four tifs together, given paths to them. If given an out folder, save out the mosaic
-        '''
-        pass
+def mosaic_tifs(tif_list, out_folder = None):
+    '''
+    Function to mosaic a set of four tifs together, given paths to them. If given an out folder, save out the mosaic
+
+    args:
+        tif_list: List of file locations of four tifs
+        out_folder: Location to save out the mosaicked raster. If None, do not save the raster
+    '''
+    #Reject invalid inputs
+    if not isinstance(tif_list, list):
+        raise TypeError("tif_list must be a list of four tif file paths")
+    if len(tif_list) != 4:
+        raise ValueError("tif_list must contain exactly four tif file paths")
+    if out_folder is not None and not os.path.isdir(out_folder):
+        raise ValueError("Output folder does not exist")
+
+    src_files = [rasterio.open(tif) for tif in tif_list]
+    mosaic = merge(src_files)
+    
+    #Get profile from one of the input files
+    profile = src_files[0].profile
+    profile.update(dtype=rasterio.float32,
+                   height=mosaic[0].shape[0],
+                   width=mosaic[0].shape[1],
+                   transform=mosaic[1],
+                   compress='lzw')
+    
+    #Create output file name
+    if out_folder is not None:
+        parts = os.path.basename(tif_list[0]).split('_')
+        metric = '_'.join(parts[:-1])
+        output_file = os.path.join(out_folder, f"{metric}_mosaic.tif")
+        with rasterio.open(output_file, 'w', **profile) as dst:
+            dst.write(mosaic)
 

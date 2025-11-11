@@ -65,3 +65,18 @@ class TestHLSTools(unittest.TestCase):
         finally:
             #Clean up temporary directory
             shutil.rmtree(temp_dir)
+
+    def test_mosaic_tifs_inputs(self):
+        '''
+        Test inputs to mosaic tifs function.
+        '''
+        from src.HLS_Processing.hls_tools import mosaic_tifs
+        #Reject non-list input
+        with self.assertRaises(TypeError):
+            mosaic_tifs("not_a_list", out_folder=None)
+        #Reject list with wrong number of files
+        with self.assertRaises(ValueError):
+            mosaic_tifs(["file1.tif", "file2.tif"], out_folder=None)
+        #Reject non-existent output folder
+        with self.assertRaises(ValueError):
+            mosaic_tifs(["file1.tif", "file2.tif", "file3.tif", "file4.tif"], out_folder="non_existent_folder")
