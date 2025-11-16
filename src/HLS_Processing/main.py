@@ -10,6 +10,9 @@ from itertools import product
 
 #Process the naive averages of bands
 output_directory = "D:\\HLS_Data\\Processed\\Naive_Averages"
+#Create output directory if it doesn't exist
+if not os.path.exists(output_directory):
+    os.makedirs(output_directory)
 
 #Go through and process all directories for Landsat and Sentinel-2 in turn
 for directory, band in product(hls.Landsat_directories, hls.L_bands):
@@ -41,6 +44,10 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
 #Get all tifs within base processed data folder
 processed_folder = "D:\\HLS_Data\\Processed\\"
 mosaic_folder = "D:\\HLS_Data\\Mosaics\\"
+#Create mosaic folder if it doesn't exist
+if not os.path.exists(mosaic_folder):
+    os.makedirs(mosaic_folder)
+
 #Get all tifs, make sure to check subdirectories if needed
 tif_files = []
 for root, dirs, files in os.walk(processed_folder):

@@ -130,4 +130,49 @@ def mosaic_tifs(tif_list, out_folder = None):
         output_file = os.path.join(out_folder, f"{metric}_mosaic.tif")
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(mosaic)
+    
+    #Close all opened files
+    for src in src_files:
+        src.close()
 
+def computeNDVI(nir_band, red_band):
+    '''
+    Function to compute NDVI from NIR and Red bands
+    NDVI is an index which indicates vegetation health
+
+    args:
+        nir_band: Numpy array of NIR band reflectance values
+        red_band: Numpy array of Red band reflectance values
+    '''
+    #Reject invalid inputs
+    if not isinstance(nir_band, np.ndarray) or not isinstance(red_band, np.ndarray):
+        raise TypeError("Input bands must be numpy arrays")
+    if nir_band.shape != red_band.shape:
+        raise ValueError("Input bands must have the same shape")
+
+    ndvi = (nir_band - red_band) / (nir_band + red_band)
+    return ndvi
+
+def computeEVI(nir_band, red_band, blue_band):
+    '''
+    Function to compute EVI from NIR, Red, and Blue bands
+    EVI is an index which indicates vegetation health, optimized for high biomass regions
+
+    args:
+        nir_band: Numpy array of NIR band reflectance values
+        red_band: Numpy array of Red band reflectance values
+        blue_band: Numpy array of Blue band reflectance values
+    '''
+    #Reject invalid inputs
+    if not isinstance(nir_band, np.ndarray) or not isinstance(red_band, np.ndarray) or not isinstance(blue_band, np.ndarray):
+        raise TypeError("Input bands must be numpy arrays")
+    if nir_band.shape != red_band.shape or nir_band.shape != blue_band.shape:
+        raise ValueError("Input bands must have the same shape")
+
+    G = 2.5
+    C1 = 6.0
+    C2 = 7.5
+    L = 1.0
+
+    evi = G * (nir_band - red_band) / (nir_band + C1 * red_band - C2 * blue_band + L)
+    return evi
