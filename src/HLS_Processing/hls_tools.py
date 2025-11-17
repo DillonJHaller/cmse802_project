@@ -2,20 +2,28 @@
 Contains functions used in processing HLS data
 Band number reference:
 Landsat bands:
+01 - Coastal/Aerosol
 02 - Blue
 03 - Green
 04 - Red
 05 - NIR
 06 - SWIR1
 07 - SWIR2
+09 - Cirrus
+10 - TIRS1 (Thermal infrared)
+11 - TIRS2
 Sentinel-2 bands:
+01 - Coastal aerosol
 02 - Blue
 03 - Green
 04 - Red
 05 - Red Edge 1
 06 - Red Edge 2
 07 - Red Edge 3
+08 - NIR broad
 8A - NIR narrow
+09 - Water vapor
+10 - Cirrus
 11 - SWIR1
 12 - SWIR2
 #See Ju et al., 2025 for more details.
@@ -25,7 +33,7 @@ import os
 import rasterio
 from rasterio.merge import merge
 
-L_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07']
+L_bands = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07']
 S_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B8A', 'B11', 'B12']
 
 #Storage_Locations
