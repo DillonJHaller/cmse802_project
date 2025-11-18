@@ -36,6 +36,9 @@ from rasterio.merge import merge
 L_bands = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07']
 S_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B8A', 'B11', 'B12']
 
+#Scale factor for reflectance values
+scale_factor = 10000.0
+
 #Storage_Locations
 Landsat_directories =  ["D:\\HLS_Data\\Data\\L30\\2024\\15\\S\\V\\D",
                         "D:\\HLS_Data\\Data\\L30\\2024\\15\\S\\W\\D",
@@ -92,6 +95,7 @@ def create_band_average(input_directory, band):
     if band_sum is not None and valid_pixel_count is not None:
         #Compute pixel-wise average
         band_average = np.divide(band_sum, valid_pixel_count, out=np.zeros_like(band_sum), where=valid_pixel_count!=0)
+        reflectances = band_average / scale_factor  #Scale to reflectance values
 
         #Return all info needed to write out GeoTIFF
         #Get profile from one of the input files
@@ -99,7 +103,7 @@ def create_band_average(input_directory, band):
         with rasterio.open(sample_file) as src:
             profile = src.profile
         profile.update(dtype=rasterio.float32, count=1, compress='lzw') #Update profile for output
-        return band_average, profile
+        return reflectances, profile
     else:
         return None, None
 
@@ -158,10 +162,10 @@ def computeNDVI(nir_band, red_band):
     if nir_band.shape != red_band.shape:
         raise ValueError("Input bands must have the same shape")
 
-    ndvi = (nir_band - red_band) / (nir_band + red_band)
+    ndvi = ((nir_band - red_band) / (nir_band + red_band))
     return ndvi
 
-def computeEVI(nir_band, red_band, blue_band):
+def computeEVI2(nir_band, red_band):
     '''
     Function to compute EVI from NIR, Red, and Blue bands
     EVI is an index which indicates vegetation health, optimized for high biomass regions
@@ -169,18 +173,20 @@ def computeEVI(nir_band, red_band, blue_band):
     args:
         nir_band: Numpy array of NIR band reflectance values
         red_band: Numpy array of Red band reflectance values
-        blue_band: Numpy array of Blue band reflectance values
+
+    Citation:
+        Jiang, Z., Huete, A. R., Didan, K., & Miura, T. (2008). Development of a two-band enhanced vegetation index without a blue band. Remote Sensing of Environment, 112(10), 3833–3845. https://doi.org/10.1016/j.rse.2008.06.006
+
     '''
     #Reject invalid inputs
-    if not isinstance(nir_band, np.ndarray) or not isinstance(red_band, np.ndarray) or not isinstance(blue_band, np.ndarray):
+    if not isinstance(nir_band, np.ndarray) or not isinstance(red_band, np.ndarray):
         raise TypeError("Input bands must be numpy arrays")
-    if nir_band.shape != red_band.shape or nir_band.shape != blue_band.shape:
+    if nir_band.shape != red_band.shape:
         raise ValueError("Input bands must have the same shape")
 
     G = 2.5
-    C1 = 6.0
-    C2 = 7.5
+    C = 2.4
     L = 1.0
 
-    evi = G * (nir_band - red_band) / (nir_band + C1 * red_band - C2 * blue_band + L)
+    evi = G * (nir_band - red_band) / (nir_band + C * red_band + L)
     return evi
