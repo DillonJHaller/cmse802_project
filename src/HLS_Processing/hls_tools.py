@@ -10,8 +10,10 @@ Landsat bands:
 06 - SWIR1
 07 - SWIR2
 09 - Cirrus
+    (The thermal bands are held out)
 10 - TIRS1 (Thermal infrared)
 11 - TIRS2
+
 Sentinel-2 bands:
 01 - Coastal aerosol
 02 - Blue
@@ -33,8 +35,8 @@ import os
 import rasterio
 from rasterio.merge import merge
 
-L_bands = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07']
-S_bands = ['B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B8A', 'B11', 'B12']
+L_bands = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B09']
+S_bands = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08', 'B8A', 'B09', 'B10', 'B11', 'B12']
 
 #Scale factor for reflectance values
 scale_factor = 10000.0
@@ -51,17 +53,26 @@ Sentinel_directories = ["D:\\HLS_Data\\Data\\S30\\2024\\15\\S\\V\\D",
 
 
 # Should take an input directory which contains subdirectories for each date.
-def create_band_average(input_directory, band):
+def create_band_average(input_directory, band, dates = ("001", "366")):
     '''
     Function to create a numpy array which has the average reflectance values for a single band
 
     args:
         input_directory: Directory which contains the raw data. 
         band: String which identifies which band is being averaged.
+        dates: Tuple of strings indicating the start and end Julian dates to consider (inclusive)
     '''
     #Reject if input directories do not exist
     if not os.path.isdir(input_directory):
         raise ValueError("Input directory does not exist")
+    #Reject invalid band inputs
+    if band not in L_bands and band not in S_bands:
+        raise ValueError("Invalid band specified")
+    #Reject invalid date inputs
+    if (not isinstance(dates, tuple) or len(dates) != 2 or
+        not all(isinstance(d, str) for d in dates) or
+        not all(d.isdigit() and len(d) == 3 for d in dates)):
+        raise ValueError("Dates must be a tuple of two strings indicating start and end Julian dates")
     
     #One subdirectory for each date
     subdirectories = [d for d in os.listdir(input_directory) if os.path.isdir(os.path.join(input_directory, d))]
@@ -70,6 +81,14 @@ def create_band_average(input_directory, band):
     valid_pixel_count = None
     #Traverse each date subdirectory
     for subdirectory in subdirectories:
+        #Fetch date from subdirectory name
+        date_string = subdirectory.split('.')[3]
+        #Date string is in format: YYYYJJJ'T'HHMMSS
+        julian_date = date_string[4:7]
+        #Check if date is within range
+        if julian_date < dates[0] or julian_date > dates[1]:
+            continue
+
         band_file = os.path.join(input_directory, subdirectory, f"{subdirectory}.{band}.tif")
         #Mask file contains cloud/shadow/water info
         #See Ju et al., 2025 for more details on Fmask values
