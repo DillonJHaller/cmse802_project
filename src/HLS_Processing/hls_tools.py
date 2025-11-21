@@ -86,8 +86,12 @@ def create_band_average(input_directory, band, dates = ("001", "366")):
         #Date string is in format: YYYYJJJ'T'HHMMSS
         julian_date = date_string[4:7]
         #Check if date is within range
-        if julian_date < dates[0] or julian_date > dates[1]:
-            continue
+        if dates[0] <= dates[1]:
+            if julian_date < dates[0] or julian_date > dates[1]:
+                continue
+        else:
+            if julian_date < dates[0] and julian_date > dates[1]:
+                continue
 
         band_file = os.path.join(input_directory, subdirectory, f"{subdirectory}.{band}.tif")
         #Mask file contains cloud/shadow/water info
@@ -144,14 +148,15 @@ def mosaic_tifs(tif_list, out_folder = None):
         raise ValueError("Output folder does not exist")
 
     src_files = [rasterio.open(tif) for tif in tif_list]
-    mosaic = merge(src_files)
+    mosaic_array, mosaic_transform = merge(src_files)
     
     #Get profile from one of the input files
     profile = src_files[0].profile
     profile.update(dtype=rasterio.float32,
-                   height=mosaic[0].shape[0],
-                   width=mosaic[0].shape[1],
-                   transform=mosaic[1],
+                   height=mosaic_array.shape[0],
+                   width=mosaic_array.shape[1],
+                   transform=mosaic_transform,
+                   count=1,
                    compress='lzw')
     
     #Create output file name
@@ -160,7 +165,7 @@ def mosaic_tifs(tif_list, out_folder = None):
         metric = '_'.join(parts[:-1])
         output_file = os.path.join(out_folder, f"{metric}_mosaic.tif")
         with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(mosaic)
+            dst.write(mosaic_array, 1)
     
     #Close all opened files
     for src in src_files:

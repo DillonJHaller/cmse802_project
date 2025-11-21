@@ -9,7 +9,7 @@ import hls_tools as hls
 from itertools import product
 
 #Process the naive averages of bands
-base_output_directory = "D:\\HLS_Data\\Processed\\Naive_Averages"
+base_output_directory = "D:\\HLS_Data\\Processed\\"
 #Create output directory if it doesn't exist
 if not os.path.exists(base_output_directory):
     os.makedirs(base_output_directory)
@@ -28,6 +28,9 @@ for directory, band in product(hls.Landsat_directories, hls.L_bands):
         profile.update(nodata=0) #Set nodata value
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(band_average.astype(rasterio.float32), 1)
+    else:
+        #Print warning if no data found
+        print(f"Warning: No valid data found for {directory}, band {band}")
 
     #Winter average (Roughly Dec 1 to Feb 28)
     winter_average, profile = hls.create_band_average(directory, band, dates=("335", "059"))
@@ -37,7 +40,11 @@ for directory, band in product(hls.Landsat_directories, hls.L_bands):
         profile.update(nodata=0) #Set nodata value
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(winter_average.astype(rasterio.float32), 1)
+    else:
+        #Print warning if no data found
+        print(f"Warning: No valid data found for {directory}, band {band}, winter averages")
 
+    
     #Summer average (Roughly Jun 1 to Aug 31)
     summer_average, profile = hls.create_band_average(directory, band, dates=("152", "243"))
     if summer_average is not None:
@@ -46,6 +53,10 @@ for directory, band in product(hls.Landsat_directories, hls.L_bands):
         profile.update(nodata=0) #Set nodata value
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(summer_average.astype(rasterio.float32), 1)
+    else:
+        #Print warning if no data found
+        print(f"Warning: No valid data found for {directory}, band {band}, summer averages")
+
         
 for directory, band in product(hls.Sentinel_directories, hls.S_bands):
     parts = directory.split(os.sep)
@@ -59,6 +70,10 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
         profile.update(nodata=0) #Set nodata value
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(band_average.astype(rasterio.float32), 1)
+    else:
+        #Print warning if no data found
+        print(f"Warning: No valid data found for {directory}, band {band}")
+
     
     #Winter average (Roughly Dec 1 to Feb 28)
     winter_average, profile = hls.create_band_average(directory, band, dates=("335", "059"))
@@ -68,6 +83,10 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
         profile.update(nodata=0) #Set nodata value
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(winter_average.astype(rasterio.float32), 1)
+    else:
+        #Print warning if no data found
+        print(f"Warning: No valid data found for {directory}, band {band}, winter averages")
+
 
     #Summer average (Roughly Jun 1 to Aug 31)
     summer_average, profile = hls.create_band_average(directory, band, dates=("152", "243"))
@@ -77,6 +96,10 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
         profile.update(nodata=0) #Set nodata value
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(summer_average.astype(rasterio.float32), 1)
+    else:
+        #Print warning if no data found
+        print(f"Warning: No valid data found for {directory}, band {band}, summer averages")
+
 
 ############
 # Mosaics #
@@ -86,7 +109,6 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
 #Get all tifs within base processed data folder
 processed_folder = "D:\\HLS_Data\\Processed\\"
 mosaic_folder = "D:\\HLS_Data\\Mosaics\\"
-
 
 #Create mosaic folder if it doesn't exist
 if not os.path.exists(mosaic_folder):
