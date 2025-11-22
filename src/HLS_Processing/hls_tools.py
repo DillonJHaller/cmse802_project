@@ -71,7 +71,8 @@ def create_band_average(input_directory, band, dates = ("001", "366")):
     #Reject invalid date inputs
     if (not isinstance(dates, tuple) or len(dates) != 2 or
         not all(isinstance(d, str) for d in dates) or
-        not all(d.isdigit() and len(d) == 3 for d in dates)):
+        not all(d.isdigit() and len(d) == 3 for d in dates) or 
+        (dates[0] < "001" or dates[0] > "366" or dates[1] < "001" or dates[1] > "366")):
         raise ValueError("Dates must be a tuple of two strings indicating start and end Julian dates")
     
     #One subdirectory for each date
@@ -106,8 +107,9 @@ def create_band_average(input_directory, band, dates = ("001", "366")):
                 if band_sum is None:
                     band_sum = np.zeros_like(band_data)
                     valid_pixel_count = np.zeros_like(band_data)
-                valid_mask = ((band_data != src.nodata) & #Valid pixels: not nodata and not cloud/shadow or nearby
-                            (mask_data % 8 == 0))
+                valid_mask = ((band_data != src.nodata) & #Valid pixels: not nodata and not cloud/shadow or nearby or ice
+                            (mask_data % 16 == 0) &
+                            (mask_data < 192)) #Aerosol optical thickness level less than "high"
                 mask_data = None
                 mask.close()
                 band_sum[valid_mask] += band_data[valid_mask]
@@ -117,7 +119,7 @@ def create_band_average(input_directory, band, dates = ("001", "366")):
     #Only returns if there is at least one good date
     if band_sum is not None and valid_pixel_count is not None:
         #Compute pixel-wise average
-        band_average = np.divide(band_sum, valid_pixel_count, out=np.zeros_like(band_sum), where=valid_pixel_count!=0)
+        band_average = np.divide(band_sum, valid_pixel_count, out=np.full(band_sum.shape, -999*scale_factor), where=valid_pixel_count!=0)
         reflectances = band_average / scale_factor  #Scale to reflectance values
 
         #Return all info needed to write out GeoTIFF
@@ -149,7 +151,23 @@ def mosaic_tifs(tif_list, out_folder = None):
 
     src_files = [rasterio.open(tif) for tif in tif_list]
     mosaic_array, mosaic_transform = merge(src_files)
-    
+
+    # Normalize mosaic output to a single 2D band
+    mosaic_array = np.asarray(mosaic_array)
+    if mosaic_array.ndim == 4:
+        # e.g., (1,1,height,width) -> take the first band
+        mosaic_array = mosaic_array[0, 0, :, :]
+    elif mosaic_array.ndim == 3:
+        # (bands, height, width) -> take the first band
+        mosaic_array = mosaic_array[0, :, :]
+    elif mosaic_array.ndim == 2:
+        # already (height, width)
+        pass
+    else:
+        for src in src_files:
+            src.close()
+        raise ValueError(f"Unexpected mosaic array shape: {mosaic_array.shape}")
+
     #Get profile from one of the input files
     profile = src_files[0].profile
     profile.update(dtype=rasterio.float32,
@@ -157,15 +175,16 @@ def mosaic_tifs(tif_list, out_folder = None):
                    width=mosaic_array.shape[1],
                    transform=mosaic_transform,
                    count=1,
-                   compress='lzw')
-    
+                   compress='lzw',
+                   nodata = -999)
+
     #Create output file name
     if out_folder is not None:
         parts = os.path.basename(tif_list[0]).split('_')
         metric = '_'.join(parts[:-1])
         output_file = os.path.join(out_folder, f"{metric}_mosaic.tif")
         with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(mosaic_array, 1)
+            dst.write(mosaic_array.astype(rasterio.float32), 1)
     
     #Close all opened files
     for src in src_files:
@@ -212,5 +231,5 @@ def computeEVI2(nir_band, red_band):
     C = 2.4
     L = 1.0
 
-    evi = G * (nir_band - red_band) / (nir_band + C * red_band + L)
-    return evi
+    evi2 = G * (nir_band - red_band) / (nir_band + C * red_band + L)
+    return evi2

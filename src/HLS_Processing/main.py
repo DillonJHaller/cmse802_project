@@ -21,41 +21,22 @@ for directory, band in product(hls.Landsat_directories, hls.L_bands):
     program = parts[-6]
     year = parts[-5]
     tile = f"{parts[-4]}{parts[-3]}{parts[-2]}{parts[-1]}"
-    band_average, profile = hls.create_band_average(directory, band)
-    if band_average is not None:
-        #Write out GeoTIFF
-        output_file = os.path.join(base_output_directory, "Naive_Averages", f"HLS_{program}_{year}_{band}naverage_{tile}.tif")
-        profile.update(nodata=0) #Set nodata value
-        with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(band_average.astype(rasterio.float32), 1)
-    else:
-        #Print warning if no data found
-        print(f"Warning: No valid data found for {directory}, band {band}")
 
-    #Winter average (Roughly Dec 1 to Feb 28)
-    winter_average, profile = hls.create_band_average(directory, band, dates=("335", "059"))
-    if winter_average is not None:
-        #Write out GeoTIFF
-        output_file = os.path.join(base_output_directory, "Winter_Averages", f"HLS_{program}_{year}_{band}winteraverage_{tile}.tif")
-        profile.update(nodata=0) #Set nodata value
-        with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(winter_average.astype(rasterio.float32), 1)
-    else:
-        #Print warning if no data found
-        print(f"Warning: No valid data found for {directory}, band {band}, winter averages")
-
-    
-    #Summer average (Roughly Jun 1 to Aug 31)
-    summer_average, profile = hls.create_band_average(directory, band, dates=("152", "243"))
-    if summer_average is not None:
-        #Write out GeoTIFF
-        output_file = os.path.join(base_output_directory, "Summer_Averages", f"HLS_{program}_{year}_{band}summeraverage_{tile}.tif")
-        profile.update(nodata=0) #Set nodata value
-        with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(summer_average.astype(rasterio.float32), 1)
-    else:
-        #Print warning if no data found
-        print(f"Warning: No valid data found for {directory}, band {band}, summer averages")
+    for season, dates in [("winter", ("335", "059")), ("summer", ("152", "243")), ("yearly", ("001", "366"))]:
+        season_output_dir = os.path.join(base_output_directory, f"{season.capitalize()}_Averages")
+        if not os.path.exists(season_output_dir):
+            os.makedirs(season_output_dir)
+        
+        band_average, profile = hls.create_band_average(directory, band, dates=dates)
+        if band_average is not None:
+            #Write out GeoTIFF
+            output_file = os.path.join(season_output_dir, f"{program}_{year}_{band}{season}average_{tile}.tif")
+            profile.update(nodata=-999) #Set nodata value
+            with rasterio.open(output_file, 'w', **profile) as dst:
+                dst.write(band_average.astype(rasterio.float32), 1)
+        else:
+            #Print warning if no data found
+            print(f"Warning: No valid data found for {directory}, band {band}, season {season}")
 
         
 for directory, band in product(hls.Sentinel_directories, hls.S_bands):
@@ -63,42 +44,22 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
     program = parts[-6]
     year = parts[-5]
     tile = f"{parts[-4]}{parts[-3]}{parts[-2]}{parts[-1]}"
-    band_average, profile = hls.create_band_average(directory, band)
-    if band_average is not None:
-        #Write out GeoTIFF
-        output_file = os.path.join(base_output_directory, "Naive_Averages", f"HLS_{program}_{year}_{band}naverage_{tile}.tif")
-        profile.update(nodata=0) #Set nodata value
-        with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(band_average.astype(rasterio.float32), 1)
-    else:
-        #Print warning if no data found
-        print(f"Warning: No valid data found for {directory}, band {band}")
-
     
-    #Winter average (Roughly Dec 1 to Feb 28)
-    winter_average, profile = hls.create_band_average(directory, band, dates=("335", "059"))
-    if winter_average is not None:
-        #Write out GeoTIFF
-        output_file = os.path.join(base_output_directory, "Winter_Averages", f"HLS_{program}_{year}_{band}winteraverage_{tile}.tif")
-        profile.update(nodata=0) #Set nodata value
-        with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(winter_average.astype(rasterio.float32), 1)
-    else:
-        #Print warning if no data found
-        print(f"Warning: No valid data found for {directory}, band {band}, winter averages")
-
-
-    #Summer average (Roughly Jun 1 to Aug 31)
-    summer_average, profile = hls.create_band_average(directory, band, dates=("152", "243"))
-    if summer_average is not None:
-        #Write out GeoTIFF
-        output_file = os.path.join(base_output_directory, "Summer_Averages", f"HLS_{program}_{year}_{band}summeraverage_{tile}.tif")
-        profile.update(nodata=0) #Set nodata value
-        with rasterio.open(output_file, 'w', **profile) as dst:
-            dst.write(summer_average.astype(rasterio.float32), 1)
-    else:
-        #Print warning if no data found
-        print(f"Warning: No valid data found for {directory}, band {band}, summer averages")
+    for season, dates in [("winter", ("335", "059")), ("summer", ("152", "243")), ("yearly", ("001", "366"))]:
+        season_output_dir = os.path.join(base_output_directory, f"{season.capitalize()}_Averages")
+        if not os.path.exists(season_output_dir):
+            os.makedirs(season_output_dir)
+        
+        band_average, profile = hls.create_band_average(directory, band, dates=dates)
+        if band_average is not None:
+            #Write out GeoTIFF
+            output_file = os.path.join(season_output_dir, f"{program}_{year}_{band}{season}average_{tile}.tif")
+            profile.update(nodata=-999) #Set nodata value
+            with rasterio.open(output_file, 'w', **profile) as dst:
+                dst.write(band_average.astype(rasterio.float32), 1)
+        else:
+            #Print warning if no data found
+            print(f"Warning: No valid data found for {directory}, band {band}, season {season}")
 
 
 ############
@@ -133,45 +94,30 @@ for m in metrics:
 # Band index calculations #
 ############################
 
-base_output_directory = "D:\\HLS_Data\\Indices"
+base_output_directory = "D:\\HLS_Data\\Mosaics"
 #Create output directory if it doesn't exist
 if not os.path.exists(base_output_directory):
     os.makedirs(base_output_directory)
 
-#Winter EVI2 mosaics
-winter_red_landsat = os.path.join(mosaic_folder, "HLS_Landsat_2024_B04winteraverage_mosaic.tif")
-winter_nir_landsat = os.path.join(mosaic_folder, "HLS_Landsat_2024_B05winteraverage_mosaic.tif")
-winter_evi2_landsat = hls.computeEVI2(winter_nir_landsat, winter_red_landsat)
-output_file = os.path.join(base_output_directory, "HLS_Landsat_2024_EVI2winter.tif")
-profile = winter_evi2_landsat[1]
-profile.update(nodata=0) #Set nodata value
-with rasterio.open(output_file, 'w', **profile) as dst:
-    dst.write(winter_evi2_landsat[0].astype(rasterio.float32), 1)
+#Compute EVI2 mosaics
+for program, season in product(["L30", "S30"], ["winter", "summer"]):
+    if program == "L30":
+        red_band_file = os.path.join(mosaic_folder, f"HLS_L30_2024_B04{season}average_mosaic.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"HLS_L30_2024_B05{season}average_mosaic.tif")
+    else:
+        red_band_file = os.path.join(mosaic_folder, f"HLS_S30_2024_B04{season}average_mosaic.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"HLS_S30_2024_B08{season}average_mosaic.tif")
+    
+    with rasterio.open(red_band_file) as red_src:
+        red_band = red_src.read(1)
+        profile = red_src.profile
+    with rasterio.open(nir_band_file) as nir_src:
+        nir_band = nir_src.read(1)
+    
+    evi2_array = hls.computeEVI2(nir_band, red_band)
+    output_file = os.path.join(base_output_directory, f"HLS_{program}_2024_EVI2{season}.tif")
+    
+    profile.update(nodata=-999) #Set nodata value
+    with rasterio.open(output_file, 'w', **profile) as dst:
+        dst.write(evi2_array.astype(rasterio.float32), 1)
 
-winter_red_sentinel = os.path.join(mosaic_folder, "HLS_Sentinel-2_2024_B04winteraverage_mosaic.tif")
-winter_nir_sentinel = os.path.join(mosaic_folder, "HLS_Sentinel-2_2024_B08winteraverage_mosaic.tif")
-winter_evi2_sentinel = hls.computeEVI2(winter_nir_sentinel, winter_red_sentinel)
-output_file = os.path.join(base_output_directory, "HLS_Sentinel-2_2024_EVI2winter.tif")
-profile = winter_evi2_sentinel[1]   
-profile.update(nodata=0) #Set nodata value
-with rasterio.open(output_file, 'w', **profile) as dst:
-    dst.write(winter_evi2_sentinel[0].astype(rasterio.float32), 1)
-
-#Summer EVI2 mosaics
-summer_red_landsat = os.path.join(mosaic_folder, "HLS_Landsat_2024_B04summeraverage_mosaic.tif")
-summer_nir_landsat = os.path.join(mosaic_folder, "HLS_Landsat_2024_B05summeraverage_mosaic.tif")
-summer_evi2_landsat = hls.computeEVI2(summer_nir_landsat, summer_red_landsat)
-output_file = os.path.join(base_output_directory, "HLS_Landsat_2024_EVI2summer.tif")
-profile = summer_evi2_landsat[1]
-profile.update(nodata=0) #Set nodata value
-with rasterio.open(output_file, 'w', **profile) as dst:
-    dst.write(summer_evi2_landsat[0].astype(rasterio.float32), 1)
-
-summer_red_sentinel = os.path.join(mosaic_folder, "HLS_Sentinel-2_2024_B04summeraverage_mosaic.tif")
-summer_nir_sentinel = os.path.join(mosaic_folder, "HLS_Sentinel-2_2024_B08summeraverage_mosaic.tif")
-summer_evi2_sentinel = hls.computeEVI2(summer_nir_sentinel, summer_red_sentinel)
-output_file = os.path.join(base_output_directory, "HLS_Sentinel-2_2024_EVI2summer.tif")
-profile = summer_evi2_sentinel[1]   
-profile.update(nodata=0) #Set nodata value
-with rasterio.open(output_file, 'w', **profile) as dst:
-    dst.write(summer_evi2_sentinel[0].astype(rasterio.float32), 1)
