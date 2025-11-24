@@ -100,13 +100,13 @@ if not os.path.exists(base_output_directory):
     os.makedirs(base_output_directory)
 
 #Compute EVI2 mosaics
-for program, season in product(["L30", "S30"], ["winter", "summer"]):
+for program, season in product(["L30", "S30"], ["winter", "summer", "yearly"]):
     if program == "L30":
-        red_band_file = os.path.join(mosaic_folder, f"HLS_L30_2024_B04{season}average_mosaic.tif")
-        nir_band_file = os.path.join(mosaic_folder, f"HLS_L30_2024_B05{season}average_mosaic.tif")
+        red_band_file = os.path.join(mosaic_folder, f"L30_2024_B04{season}average_mosaic.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"L30_2024_B05{season}average_mosaic.tif")
     else:
-        red_band_file = os.path.join(mosaic_folder, f"HLS_S30_2024_B04{season}average_mosaic.tif")
-        nir_band_file = os.path.join(mosaic_folder, f"HLS_S30_2024_B08{season}average_mosaic.tif")
+        red_band_file = os.path.join(mosaic_folder, f"S30_2024_B04{season}average_mosaic.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"S30_2024_B08{season}average_mosaic.tif")
     
     with rasterio.open(red_band_file) as red_src:
         red_band = red_src.read(1)
@@ -115,7 +115,7 @@ for program, season in product(["L30", "S30"], ["winter", "summer"]):
         nir_band = nir_src.read(1)
     
     evi2_array = hls.computeEVI2(nir_band, red_band)
-    output_file = os.path.join(base_output_directory, f"HLS_{program}_2024_EVI2{season}.tif")
+    output_file = os.path.join(base_output_directory, f"{program}_2024_EVI2{season}.tif")
     
     profile.update(nodata=-999) #Set nodata value
     with rasterio.open(output_file, 'w', **profile) as dst:

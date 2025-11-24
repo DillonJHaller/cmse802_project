@@ -7,7 +7,7 @@ import pandas as pd
 import os
 import rasterio
 
-mosaic_directory = "D:\\HLS_Data\\Processed\\Naive_Averages\\Mosaicked"
+mosaic_directory = "D:\\HLS_Data\\Mosaics"
 
 def pull_hls_data(shapefile_path, mosaic_directory, output_csv):
     #Read in the shapefile
