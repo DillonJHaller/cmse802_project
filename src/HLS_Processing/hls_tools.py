@@ -182,7 +182,7 @@ def mosaic_tifs(tif_list, out_folder = None):
     if out_folder is not None:
         parts = os.path.basename(tif_list[0]).split('_')
         metric = '_'.join(parts[:-1])
-        output_file = os.path.join(out_folder, f"{metric}_mosaic.tif")
+        output_file = os.path.join(out_folder, f"{metric}.tif")
         with rasterio.open(output_file, 'w', **profile) as dst:
             dst.write(mosaic_array.astype(rasterio.float32), 1)
     

@@ -1,5 +1,5 @@
 '''
-Implements a model to detect former farm land (maybe) using sklearn's RandomForestClassifier
+Implements a model to detect former farm land (maybe)
 '''
 
 import sklearn
@@ -9,6 +9,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import modeling_tools as mt
 rand_seed = 2390
 
 #Read in training data
@@ -19,49 +20,59 @@ feature_columns = [col for col in training_data.columns if col not in ['ID', 'No
 X_train = training_data[feature_columns].values
 y_train = training_data['LTPC'].values
 
-#Create grid of parameters for grid search
-param_grid = {
-    'n_estimators': [100, 200, 300, 400, 500],
-    'max_features': ['sqrt', 'log2'],
-    'max_depth': [5,10,15,20],
-    'criterion': ['gini','entropy']
-}
-model = RandomForestClassifier(random_state=rand_seed)
-grid_search = GridSearchCV(estimator=model, 
-                           param_grid=param_grid, 
-                           cv=5, 
-                           n_jobs=-1, 
-                           verbose=2,
-                           scoring = 'roc_auc_ovr')
-grid_search.fit(X_train, y_train)
-print("Best parameters found: ", grid_search.best_params_)
-print("Best cross-validation ROC/AUC: ", grid_search.best_score_)
-model = grid_search.best_estimator_
-
-#Save out model
-import pickle
-
-filename = 'results\\saved_models\\random_forest_model.pkl'
-pickle.dump(model, open(filename, 'wb'))
-
-##Evaluate on test data
 #Read in testing data
 testing_data = pd.read_csv("data\\Testing_Data.csv")
 
 #Prepare feature matrix and labels
 feature_columns = [col for col in testing_data.columns if col not in ['ID', 'Northing', 'Easting', 'LTPC']]
-X_test = training_data[feature_columns].values
-y_test = training_data['LTPC'].values
+X_test = testing_data[feature_columns].values
+y_test = testing_data['LTPC'].values
 
-#Make predictions
-y_pred = model.predict(X_test)
 
-#Generate confusion matrix
-cm = confusion_matrix(y_test, y_pred, labels=model.classes_)
+##Random Forest model
+#Create grid of parameters for grid search
+param_grid = {
+    'n_estimators': [100, 200, 300],
+    'max_features': ['sqrt', 'log2'],
+    'max_depth': [5,10,15,20],
+    'criterion': ['gini','entropy']
+}
+
+rf_model, cm = mt.random_forest_model(X_train, y_train, X_test, y_test, param_grid, rand_seed)
+
+#Save out model
+import pickle
+filename = 'results\\saved_models\\random_forest_model.pkl'
+pickle.dump(rf_model, open(filename, 'wb'))
+
+#Save out confusion matrix figure
 disp = ConfusionMatrixDisplay(confusion_matrix=cm,
-                              display_labels=model.classes_)
+                              display_labels=rf_model.classes_)
 disp.plot()
-
 plt.title("Random Forest Classifier Confusion Matrix")
 plt.savefig("results\\figures\\random_forest_confusion_matrix.png")
+plt.show()
+
+
+##Support Vector Machine model
+#Create grid of parameters for grid search
+param_grid = {
+    'C': [100, 1000, 10000, 100000],
+    'gamma': [0.001, 0.01, 0.1, 1, 10, 100],
+    'kernel': ['rbf']
+}
+
+sv_model, cm = mt.support_vector_model(X_train, y_train, X_test, y_test, param_grid, rand_seed)
+
+#Save out model
+import pickle
+filename = 'results\\saved_models\\support_vector_model.pkl'
+pickle.dump(sv_model, open(filename, 'wb'))
+
+#Save out confusion matrix figure
+disp = ConfusionMatrixDisplay(confusion_matrix=cm,
+                              display_labels=sv_model.classes_)
+disp.plot()
+plt.title("Support Vector Classifier Confusion Matrix")
+plt.savefig("results\\figures\\support_vector_confusion_matrix.png")
 plt.show()

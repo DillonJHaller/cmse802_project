@@ -30,7 +30,7 @@ for directory, band in product(hls.Landsat_directories, hls.L_bands):
         band_average, profile = hls.create_band_average(directory, band, dates=dates)
         if band_average is not None:
             #Write out GeoTIFF
-            output_file = os.path.join(season_output_dir, f"{program}_{year}_{band}{season}average_{tile}.tif")
+            output_file = os.path.join(season_output_dir, f"{program}_{year}_{band}{season}_{tile}.tif")
             profile.update(nodata=-999) #Set nodata value
             with rasterio.open(output_file, 'w', **profile) as dst:
                 dst.write(band_average.astype(rasterio.float32), 1)
@@ -53,7 +53,7 @@ for directory, band in product(hls.Sentinel_directories, hls.S_bands):
         band_average, profile = hls.create_band_average(directory, band, dates=dates)
         if band_average is not None:
             #Write out GeoTIFF
-            output_file = os.path.join(season_output_dir, f"{program}_{year}_{band}{season}average_{tile}.tif")
+            output_file = os.path.join(season_output_dir, f"{program}_{year}_{band}{season}_{tile}.tif")
             profile.update(nodata=-999) #Set nodata value
             with rasterio.open(output_file, 'w', **profile) as dst:
                 dst.write(band_average.astype(rasterio.float32), 1)
@@ -102,11 +102,11 @@ if not os.path.exists(base_output_directory):
 #Compute EVI2 mosaics
 for program, season in product(["L30", "S30"], ["winter", "summer", "yearly"]):
     if program == "L30":
-        red_band_file = os.path.join(mosaic_folder, f"L30_2024_B04{season}average_mosaic.tif")
-        nir_band_file = os.path.join(mosaic_folder, f"L30_2024_B05{season}average_mosaic.tif")
+        red_band_file = os.path.join(mosaic_folder, f"L30_2024_B04{season}_mosaic.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"L30_2024_B05{season}_mosaic.tif")
     else:
-        red_band_file = os.path.join(mosaic_folder, f"S30_2024_B04{season}average_mosaic.tif")
-        nir_band_file = os.path.join(mosaic_folder, f"S30_2024_B08{season}average_mosaic.tif")
+        red_band_file = os.path.join(mosaic_folder, f"S30_2024_B04{season}_mosaic.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"S30_2024_B08{season}_mosaic.tif")
     
     with rasterio.open(red_band_file) as red_src:
         red_band = red_src.read(1)
