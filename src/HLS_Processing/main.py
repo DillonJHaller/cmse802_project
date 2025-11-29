@@ -102,11 +102,11 @@ if not os.path.exists(base_output_directory):
 #Compute EVI2 mosaics
 for program, season in product(["L30", "S30"], ["winter", "summer", "yearly"]):
     if program == "L30":
-        red_band_file = os.path.join(mosaic_folder, f"L30_2024_B04{season}_mosaic.tif")
-        nir_band_file = os.path.join(mosaic_folder, f"L30_2024_B05{season}_mosaic.tif")
+        red_band_file = os.path.join(mosaic_folder, f"L30_2024_B04{season}.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"L30_2024_B05{season}.tif")
     else:
-        red_band_file = os.path.join(mosaic_folder, f"S30_2024_B04{season}_mosaic.tif")
-        nir_band_file = os.path.join(mosaic_folder, f"S30_2024_B08{season}_mosaic.tif")
+        red_band_file = os.path.join(mosaic_folder, f"S30_2024_B04{season}.tif")
+        nir_band_file = os.path.join(mosaic_folder, f"S30_2024_B08{season}.tif")
     
     with rasterio.open(red_band_file) as red_src:
         red_band = red_src.read(1)
