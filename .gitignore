@@ -211,3 +211,6 @@ __marimo__/
 
 *.pptx
 *.ppt
+
+#Ignore barchart pngs
+results/figures/barcharts/*.png

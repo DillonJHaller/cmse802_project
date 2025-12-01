@@ -45,11 +45,13 @@ test_df = pull_hls_data(shapefile_test, mosaic_directory)
 
 ##Throw out missing values
 train_df.replace(-999, np.nan, inplace=True)
+test_df.replace(-999, np.nan, inplace=True)
 
 #Find any rows with highly implausible values (<5 or > 5) and set to NaN
 for col in train_df.columns:
     if col not in ['ID', 'Northing', 'Easting', 'LTPC']:
         train_df.loc[(train_df[col] < -5) | (train_df[col] > 5), col] = np.nan
+        test_df.loc[(test_df[col] < -5) | (test_df[col] > 5), col] = np.nan
 
 
 # ##Further feature engineering:
