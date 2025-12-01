@@ -43,23 +43,6 @@ train_df = pull_hls_data(shapefile_train, mosaic_directory)
 shapefile_test = "data\\Train_Test_Points\\testing_points.shp"
 test_df = pull_hls_data(shapefile_test, mosaic_directory)
 
-###################################################
-#This section is temporary, I'm implementing this now to match with changes I made upstream
-################
-
-#Remove the words 'average' and 'mosaic from column names
-def clean_column_names(df):
-    new_columns = {}
-    for col in df.columns:
-        if 'average' in col or 'mosaic' in col:
-            new_col = col.replace('average', '')
-            new_col = new_col.replace('_mosaic', '')
-            new_columns[col] = new_col
-    df.rename(columns=new_columns, inplace=True)
-for df in [train_df, test_df]:
-    clean_column_names(df)
-#####################################################
-
 ##Further feature engineering:
 def combine_sentinel_landsat(df, feature_pairs):
     '''

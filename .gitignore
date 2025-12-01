@@ -208,3 +208,6 @@ __marimo__/
 
 #Ignore all png files to save space
 .png
+
+*.pptx
+*.ppt
