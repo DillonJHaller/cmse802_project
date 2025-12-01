@@ -73,6 +73,16 @@ plt.show()
 
 
 ##Support Vector Machine model
+
+#Throw out any rows with missing values
+
+y_train = y_train[~np.isnan(X_train).any(axis=1)]
+X_train = X_train[~np.isnan(X_train).any(axis=1)]
+
+y_test = y_test[~np.isnan(X_test).any(axis=1)]
+X_test = X_test[~np.isnan(X_test).any(axis=1)]
+
+
 #Create grid of parameters for grid search
 param_grid = {
     'C': [100, 1000, 10000, 100000],

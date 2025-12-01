@@ -43,6 +43,9 @@ train_df = pull_hls_data(shapefile_train, mosaic_directory)
 shapefile_test = "data\\Train_Test_Points\\testing_points.shp"
 test_df = pull_hls_data(shapefile_test, mosaic_directory)
 
+##Throw out missing values
+train_df.replace(-999, np.nan, inplace=True)
+
 ##Further feature engineering:
 def combine_sentinel_landsat(df, feature_pairs):
     '''
@@ -50,42 +53,42 @@ def combine_sentinel_landsat(df, feature_pairs):
 
     args:
         df: DataFrame containing HLS features
-        feature_pairs: List of tuples, each containing the names of the Landsat and Sentinel features to be averaged.
+        feature_pairs: List of tuples, each containing the names of the Landsat and Sentinel features to be averaged, and the overall feature name.
     '''
-    for landsat_feature, sentinel_feature in feature_pairs:
+    for landsat_feature, sentinel_feature, combined_feature_name in feature_pairs:
         if landsat_feature in df.columns and sentinel_feature in df.columns:
-            combined_feature_name = f"Avg_{'_'.join(landsat_feature.split('_')[1:])}"  
             df[combined_feature_name] = df[[landsat_feature, sentinel_feature]].mean(axis=1)
             # Drop the original features
             df.drop(columns=[landsat_feature, sentinel_feature], inplace=True)
 
 #List of feature pairs to combine
 feature_pairs = [
-    ('L30_2024_B01winter', 'S30_2024_B01winter'), #Aerosol
-    ('L30_2024_B02winter', 'S30_2024_B02winter'), #Blue
-    ('L30_2024_B03winter', 'S30_2024_B03winter'), #Green
-    ('L30_2024_B04winter', 'S30_2024_B04winter'), #Red
-    ('L30_2024_B05winter', 'S30_2024_B08winter'), #NIR
-    ('L30_2024_B06winter', 'S30_2024_B11winter'), #SWIR1
-    ('L30_2024_B07winter', 'S30_2024_B12winter'), #SWIR2
-    ('L30_2024_EVI2winter', 'S30_2024_EVI2winter'), #EVI2
+    ('L30_2024_B01winter', 'S30_2024_B01winter', '2024_Aerosolwinter'),
+    ('L30_2024_B02winter', 'S30_2024_B02winter', '2024_Bluewinter'),
+    ('L30_2024_B03winter', 'S30_2024_B03winter', '2024_Greenwinter'),
+    ('L30_2024_B04winter', 'S30_2024_B04winter', '2024_Redwinter'),
+    ('L30_2024_B05winter', 'S30_2024_B08winter', '2024_NIRwinter'),
+    ('L30_2024_B06winter', 'S30_2024_B11winter', '2024_SWIR1winter'),
+    ('L30_2024_B07winter', 'S30_2024_B12winter', '2024_SWIR2winter'),
+    ('L30_2024_EVI2winter', 'S30_2024_EVI2winter', '2024_EVI2winter'),
 
-    ('L30_2024_B01summer', 'S30_2024_B01summer'),
-    ('L30_2024_B02summer', 'S30_2024_B02summer'),
-    ('L30_2024_B03summer', 'S30_2024_B03summer'),   
-    ('L30_2024_B04summer', 'S30_2024_B04summer'),
-    ('L30_2024_B05summer', 'S30_2024_B08summer'),
-    ('L30_2024_B06summer', 'S30_2024_B11summer'),
-    ('L30_2024_B07summer', 'S30_2024_B12summer'),
-    ('L30_2024_EVI2summer', 'S30_2024_EVI2summer'),
+    ('L30_2024_B01summer', 'S30_2024_B01summer', '2024_Aerosolsummer'),
+    ('L30_2024_B02summer', 'S30_2024_B02summer', '2024_Bluesummer'),
+    ('L30_2024_B03summer', 'S30_2024_B03summer', '2024_Greensummer'),
+    ('L30_2024_B04summer', 'S30_2024_B04summer', '2024_Redsummer'),
+    ('L30_2024_B05summer', 'S30_2024_B08summer', '2024_NIRsummer'),
+    ('L30_2024_B06summer', 'S30_2024_B11summer', '2024_SWIR1summer'),
+    ('L30_2024_B07summer', 'S30_2024_B12summer', '2024_SWIR2summer'),
+    ('L30_2024_EVI2summer', 'S30_2024_EVI2summer', '2024_EVI2summer'),
 
-    ('L30_2024_B01yearly', 'S30_2024_B01yearly'),
-    ('L30_2024_B02yearly', 'S30_2024_B02yearly'),
-    ('L30_2024_B03yearly', 'S30_2024_B03yearly'),
-    ('L30_2024_B04yearly', 'S30_2024_B04yearly'),
-    ('L30_2024_B05yearly', 'S30_2024_B08yearly'),
-    ('L30_2024_B06yearly', 'S30_2024_B11yearly'),
-    ('L30_2024_B07yearly', 'S30_2024_B12yearly')
+    ('L30_2024_B01yearly', 'S30_2024_B01yearly', '2024_Aerosolyearly'),
+    ('L30_2024_B02yearly', 'S30_2024_B02yearly', '2024_Blueyearly'),
+    ('L30_2024_B03yearly', 'S30_2024_B03yearly', '2024_Greenyearly'),
+    ('L30_2024_B04yearly', 'S30_2024_B04yearly', '2024_Redyearly'),
+    ('L30_2024_B05yearly', 'S30_2024_B08yearly', '2024_NIRyearly'),
+    ('L30_2024_B06yearly', 'S30_2024_B11yearly', '2024_SWIR1yearly'),
+    ('L30_2024_B07yearly', 'S30_2024_B12yearly', '2024_SWIR2yearly'),
+    ('L30_2024_EVI2yearly', 'S30_2024_EVI2yearly', '2024_EVI2yearly')
 ]
 
 for df in [train_df, test_df]:
@@ -101,13 +104,13 @@ def add_seasonal_differences(df, bands):
         bands: List of band identifiers to compute seasonal differences for.
     '''
     for band in bands:
-        winter_col = f"Avg_2024_{band}winter"
-        summer_col = f"Avg_2024_{band}summer"
+        winter_col = f"2024_{band}winter"
+        summer_col = f"2024_{band}summer"
         if winter_col in df.columns and summer_col in df.columns:
             diff_col = f"Diff_{band}_summer_winter"
             df[diff_col] = df[summer_col] - df[winter_col]
 
-bands_to_process = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'EVI2']
+bands_to_process = ['Aerosol', 'Blue', 'Green', 'Red', 'NIR', 'SWIR1', 'SWIR2', 'EVI2']
 for df in [train_df, test_df]:
     add_seasonal_differences(df, bands_to_process)
 
