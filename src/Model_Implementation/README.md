@@ -3,3 +3,4 @@ With all the data generated elsewhere, this folder contains the code to actually
 
 `run_model.py` runs the implementation of the model
 `modeling_tools.py` contains functions used in the implementation and analysis of the model
+`shap_analysis.py` contains analysis of shaply values

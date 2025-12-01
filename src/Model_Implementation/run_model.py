@@ -12,6 +12,19 @@ import matplotlib.pyplot as plt
 import modeling_tools as mt
 rand_seed = 2390
 
+#Dictionary of LTPC classes
+lptc_dict = {
+    1: "Stable pasture/hay",
+    2: "Stable cropland",
+    3: "Stable non-agricultural/non-developed",
+    4: "Transitioned from pasture/hay to cropland",
+    5: "Transitioned from pasture to non-agricultural/non-developed",
+    6: "Transitioned from cropland to pasture",
+    7: "Transitioned from cropland to NAND",
+    8: "Transitioned from NAND to pasture",
+    9: "Transitioned from NAND to crops"
+}
+
 #Read in training data
 training_data = pd.read_csv("data\\Training_Data.csv")
 
@@ -50,6 +63,11 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm,
                               display_labels=rf_model.classes_)
 disp.plot()
 plt.title("Random Forest Classifier Confusion Matrix")
+#Set x and y labels with class names
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+#plt.xticks(ticks=np.arange(len(rf_model.classes_)), labels=[lptc_dict.get(cls, str(cls)) for cls in rf_model.classes_], rotation=45, ha='right')
+#plt.yticks(ticks=np.arange(len(rf_model.classes_)), labels=[lptc_dict.get(cls, str(cls)) for cls in rf_model.classes_])
 plt.savefig("results\\figures\\random_forest_confusion_matrix.png")
 plt.show()
 
@@ -74,5 +92,10 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm,
                               display_labels=sv_model.classes_)
 disp.plot()
 plt.title("Support Vector Classifier Confusion Matrix")
+#Set x and y labels with class names
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+#plt.xticks(ticks=np.arange(len(rf_model.classes_)), labels=[lptc_dict.get(cls, str(cls)) for cls in rf_model.classes_], rotation=45, ha='right')
+#plt.yticks(ticks=np.arange(len(rf_model.classes_)), labels=[lptc_dict.get(cls, str(cls)) for cls in rf_model.classes_])
 plt.savefig("results\\figures\\support_vector_confusion_matrix.png")
 plt.show()
