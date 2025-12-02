@@ -1,5 +1,5 @@
 '''
-Main function. Runs the process to generate labels from NLCD from start to finish
+Main script. Runs the process to generate labels from NLCD from start to finish
 '''
 import numpy as np
 import pandas as pd

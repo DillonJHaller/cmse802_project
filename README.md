@@ -14,8 +14,6 @@ Repository for Dillon Haller's CMSE 802 semester project
 
 **NOTE:** This process depends heavily on very large files (>1 GB each, and very numerous). Those files cannot be saved on GitHub. These instructions assume you have the data saved locally. If you do not, most of the code under `src` will not run.
 
-Most of the code so far written is pre-processing. There are three pre-processing steps, each with their own folder. The NLCD processing and HLS processing need to be done first, but between the two of them can be done in either order. After that, the training and testing data need to be generated. Finally, the actual model implementation is done at the end.
-
 <h4> 1a. Pre-processing land cover data </h4>
 
 The scripts for pre-processing land cover data are found under `src\Former_Farmland_Detection.` In brief, running `NLCD_ReClassifier.py` will save out landcover datasets that have been reclassified into only four land cover types, pasture, cropland, non-agricultural/non-developed (NAND), and developed. Running `Former_Farmland_Detection.py` will fetch those reclassified landcover datasets and convert them to Long-term pattern classes (LTPCs), which track the trajectories of the land cover over the last ten years of the original dataset. We are interested in pasture, farmland, and NAND areas and any area which transitioned between any two of those. Any other patterns are not considered further. These LTPCs constitute the labels for the machine learning model.
@@ -24,7 +22,7 @@ The scripts for pre-processing land cover data are found under `src\Former_Farml
 
 <h4> 1b. Pre-processing HLS data </h4>
 
-The scripts for pre-processing the HLS satellite data are found under `src\HLS_Processing`. This is the "Feature engineering" step. Currently, I have only been able to put up `Naive_HLS_Processing.py`, which computes average reflectance values over 2024. These aren't really very useful. Further HLS processing will be added here. Note that there is a step I completed outside this repo because it can be more easily done outside of Python for small datasets. This step is mosaicking the data (stitching tiles together). Note that even while not implemented all the way, this step is very RAM and processor intensive
+The scripts for pre-processing the HLS satellite data are found under `src\HLS_Processing`. This is the "Feature engineering" step. Currently, I have only been able to put up `Naive_HLS_Processing.py`, which computes average reflectance values over 2024. These aren't really very useful. Further HLS processing will be added here. Note that there is a step I completed outside this repo because it can be more easily done outside of Python for small datasets. This step is mosaicking the data (stitching tiles together). This step is very RAM and processor intensive
 
 <h4> 2. Generating the training and testing datasets </h4>
 
@@ -40,12 +38,13 @@ This code is entirely written in Python. You will need Python 3.x to run it, as 
 1. NumPy
 2. Pandas
 3. MatPlotLib
-4. GDAL - The Geospatial Data Abstraction Library
-5. Rasterio - A wrapper for many GDAL functions that is somewhat easier to work with
-6. Geopandas - An extension to Pandas that allows for columns to contain information on geographic locations
-7. Shapely
-8. pickle
-9. unittest - Only if you want to run the unittests yourself
+4. scikit-learn
+5. GDAL - The Geospatial Data Abstraction Library
+6. Rasterio - A wrapper for many GDAL functions that is somewhat easier to work with
+7. Geopandas - An extension to Pandas that allows for columns to contain information on geographic locations
+8. Shapely
+9. pickle
+10. unittest - Only if you want to run the unittests yourself
 
 <h3> Data: </h3>
 
