@@ -99,8 +99,8 @@ feature_pairs = [
     ('L30_2024_EVI2yearly', 'S30_2024_EVI2yearly', '2024_EVI2yearly')
 ]
 
-#for df in [train_df, test_df]:
-    #combine_sentinel_landsat(df, feature_pairs) #Not going to do this for now
+for df in [train_df, test_df]:
+    combine_sentinel_landsat(df, feature_pairs)
 
 #Get summer/winter differences for selected bands and EVI2
 def add_seasonal_differences(df, bands):
