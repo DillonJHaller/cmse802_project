@@ -16,21 +16,27 @@ Repository for Dillon Haller's CMSE 802 semester project
 
 <h4> 1a. Pre-processing land cover data </h4>
 
-The scripts for pre-processing land cover data are found under `src\Former_Farmland_Detection.` In brief, running `NLCD_ReClassifier.py` will save out landcover datasets that have been reclassified into only four land cover types, pasture, cropland, non-agricultural/non-developed (NAND), and developed. Running `Former_Farmland_Detection.py` will fetch those reclassified landcover datasets and convert them to Long-term pattern classes (LTPCs), which track the trajectories of the land cover over the last ten years of the original dataset. We are interested in pasture, farmland, and NAND areas and any area which transitioned between any two of those. Any other patterns are not considered further. These LTPCs constitute the labels for the machine learning model.
+The scripts for pre-processing land cover data are found under `src\nlcd_analysis.` In brief, running `main.py` will save out landcover datasets that have been reclassified into only four land cover types, pasture, cropland, non-agricultural/non-developed (NAND), and developed. This script will then fetch those reclassified landcover datasets and convert them to Long-term pattern classes (LTPCs), which track the trajectories of the land cover over the last ten years of the original dataset. We are interested in pasture, farmland, and NAND areas and any area which transitioned between any two of those. Any other patterns are not considered further. These LTPCs constitute the labels for the machine learning model.
 
-`Transition_matrix.py` is also located here. It is not part of the model generation process, but used to look at more specific dates and types of land cover transitions.
+`nlcd_tools.py` contains the functions that are used to pre-process land cover data. These are `reclass_lc`, which converts the original land cover classes into the four classes of interest, and `ltpc_conversion` which takes several years of reclassified land cover data and creates the LTPC array therefrom.
 
 <h4> 1b. Pre-processing HLS data </h4>
 
-The scripts for pre-processing the HLS satellite data are found under `src\HLS_Processing`. This is the "Feature engineering" step. Currently, I have only been able to put up `Naive_HLS_Processing.py`, which computes average reflectance values over 2024. These aren't really very useful. Further HLS processing will be added here. Note that there is a step I completed outside this repo because it can be more easily done outside of Python for small datasets. This step is mosaicking the data (stitching tiles together). This step is very RAM and processor intensive
+The scripts for pre-processing the HLS satellite data are found under `src\HLS_Processing`. This step contains most of the feature engineering. Running `main.py` will convert raw satellite observations into summarized layers from which values can be extracted. `hls_tools.py` contains the functions which are used to summarize the HLS data, as well as a few constants that are fed in. `create_band_average` averages values across a given set of dates, ignoring those that have poor values in the QA band. `mosaic_tifs` is used to combine the four tiles of the study area together, and `ComputeEVI2` computes the EVI2 index. Note that `ComputeNDVI` is not currently used. 
+
+<strong> WARNING: this step is very RAM and CPU intensive </strong>. It may take several hours to run locally.
 
 <h4> 2. Generating the training and testing datasets </h4>
 
-The scripts under `src\Train_Test` actually generate the data science-friendly datasets. NLCD and HLS processing must be done before proceeding to this step. `Generate_train_test_points.py` creates shapefiles at random pixels in each LTPC. These shapefiles are saved in the repo. `Pull_HLS_Data.py` uses the Rasterio library to grab values from the HLS data at each of the previously generated points.
+The scripts under `src\Train_Test` actually generate the data science-friendly datasets. NLCD and HLS processing must be done before proceeding to this step. `Generate_train_test_points.py` creates shapefiles at random pixels in each LTPC. These shapefiles are saved in the repo. `Pull_HLS_Data.py` uses the Rasterio library to grab values from the HLS data at each of the previously generated points. It also performs a bit of additional feature engineering that can be done more quickly without generating whole raster mosaics.
 
 <h4> 3. Model Implementation </h4>
 
-The scripts under `src\Model_Implementation` will perform all work related to actually implementing the model. This is the only step which can be done without access to the original remote sensing archive. Currently, this only contains `Model_Implementation.py`, which creates a simple random forest model trained on the data pulled from HLS and the labels pulled from the NLCD.
+The scripts under `src\Model_Implementation` perform all work related to actually implementing the model. This is the only step which can be done without access to the original remote sensing archive. `run_model.py` creates, trains, and evaluates a random forest and support vector classifier separately. `model_analysis.py` reads in those models to perform a bit of basic analysis on which features are important to each model. Similarly to other folders within `src`, `modeling_tools.py` is a module containing functions used in model generation and evaluation.
+
+<h4> Exploratory Analysis </h4>
+
+In addition to the main workflow, there are a few notebooks contained under `explo` which perform some optional exploratory data analysis. The script and notebook under `transitions` generate some basic time series from the NLCD data that track changes in the prevalence of specific land cover categories over time. `reflectance_values.ipynb` takes the spreadsheets generated by `Pull_HLS_Data` and creates a series of bar charts showing reflectance values for each of the LTPCs.
 
 <h3> Required packages and dependencies: </h3>
 
